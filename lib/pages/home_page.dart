@@ -1,129 +1,120 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_bloc/flutter_bloc.dart';
-import 'package:pos_app/bloc/groups/groups_bloc.dart';
-import 'package:pos_app/bloc/mercaderiaSabores/mercaderiasabores_bloc.dart';
-import 'package:pos_app/bloc/products/products_bloc.dart';
-import 'package:pos_app/bloc/sabores/sabores_bloc.dart';
-import 'package:pos_app/models/grupo.dart';
-import 'package:pos_app/pages/group_page.dart';
-import 'package:pos_app/services/api_provider.dart';
-import 'package:pos_app/services/api_repository.dart';
-import 'package:pos_app/widgets/custom_page_route.dart';
-import 'package:pos_app/widgets/icon_btn.dart';
-import 'package:pos_app/widgets/item_widget.dart';
-import 'package:provider/provider.dart';
+import 'package:google_fonts/google_fonts.dart';
 
-class HomePage extends StatefulWidget {
+class HomePage extends StatelessWidget {
   const HomePage({Key? key}) : super(key: key);
 
   @override
-  State<HomePage> createState() => _HomePageState();
-}
-
-class _HomePageState extends State<HomePage> {
-
-  @override
-  void initState() {
-    
-    var groupsBloc = Provider.of<GroupsBloc>(context, listen: false);
-    groupsBloc.add(GetGroupsList());
-
-    var productsBloc = Provider.of<ProductsBloc>(context, listen: false);
-    productsBloc.add(GetProductsList());
-
-    var saboresBloc = Provider.of<SaboresBloc>(context, listen: false);
-    saboresBloc.add(GetSaboresList());
-
-    var mercaderiasaboresBloc = Provider.of<MercaderiasaboresBloc>(context, listen: false);
-    mercaderiasaboresBloc.add(GetMercaderiaSaboresList());
-    
-
-    super.initState();
-  }
-
-  @override
   Widget build(BuildContext context) {
-    
+    final height = MediaQuery.of(context).size.height;
+    return Container(
+      decoration: const BoxDecoration(
+          gradient: LinearGradient(
+              begin: Alignment.topCenter,
+              end: Alignment.bottomCenter,
+              colors: [ Colors.redAccent, Colors.white ],
+              stops: [1, 1]
+          )),
+              
+      child: Scaffold(
+        backgroundColor: Colors.transparent,
 
-    return Scaffold(
-      appBar: AppBar(
-        elevation: 2,
-        backgroundColor: Colors.redAccent,
-        iconTheme: const IconThemeData(color: Colors.white),
-        leading: const Icon(Icons.point_of_sale),
-        title: Row(
-          children: const 
-          [
-            Text("Productos", style: TextStyle(fontWeight: FontWeight.w500),),
-            Spacer(),
-            IconBtn(),
-            
-          ],
+        appBar: AppBar(
+          backgroundColor: Colors.redAccent,
+          elevation: 0,
+          centerTitle: true,
+          title: Text('Mi abuela', style: GoogleFonts.openSans(
+            textStyle: const TextStyle(
+              color: Colors.white, 
+              fontSize: 24,
+              fontWeight: FontWeight.bold
+            )
+          )),
         ),
         
+        body: SafeArea(
+          child: Container(
+            margin: EdgeInsets.only(top: (height*0.04), bottom: 20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.spaceAround,
+              children: const [
+                OptionWidget(route: 'products', color: Colors.redAccent, title: 'Productos', icon: Icon(Icons.fastfood, color: Colors.white, size: 50),),
+                OptionWidget(route: 'cart', color: Colors.redAccent, title: 'Pedido', icon: Icon(Icons.note_alt, color: Colors.white, size: 50,)),
+                OptionWidget(route: 'products', color: Colors.redAccent, title: 'Ordenes', icon: Icon(Icons.description , color: Colors.white, size: 50)),
+              ],
+            ),
+          ),
+        ),
       ),
-      body: _buildGroupsList()
     );
   }
 }
 
-_buildGroupsList(){
-  return BlocListener<GroupsBloc, GroupsState>(
-    listener: (context, state) {
-      if (state is GroupError) {
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(
-            content: Text(state.message!),
-          ),
-        );
-      }
-    },
+class OptionWidget extends StatelessWidget {
+
+  const OptionWidget({
     
-    child: BlocBuilder<GroupsBloc, GroupsState>(
-      builder: (context, state) {
-        if (state is GroupInitial) {
-              return _buildLoading();
-            } else if (state is GroupLoading) {
-              return _buildLoading();
-            } else if (state is GroupLoaded) {
-              return _buildCard(context, state.groups);
-            } else if (state is GroupError) {
-              return Container();
-            } else {
-              return Container();
-            }
-      },
-    )
-  );
-}
+    Key? key, 
+    
+    required this.route, 
+    required this.color, 
+    required this.title, 
+    required this.icon,
 
-_buildCard(BuildContext context, List<Grupo> groups) {
-  return groups.isNotEmpty ? Container(
-        padding: const EdgeInsets.all(15),
-        color: Colors.red,
-        child: GridView.count(
-          crossAxisCount: 1,
-          crossAxisSpacing:10,
-          mainAxisSpacing: 10,
-          childAspectRatio: (1 / 0.18),
-          
-          children: List.generate(groups.length, (i) {  
-            String id = groups[i].grupoId.toString();
-            return ItemWidget(name: groups[i].grupo, function: ()
-              {
-                final page = GroupPage(groupId: id, groupName: groups[i].grupo );
-                Navigator.of(context).push(CustomRoute().createRoute(page));
-              }
-            );
-          })
+  }) : super(key: key);
+  
+  final String route;
+  final Color color;
+  final String title;
+  final Icon icon;
+
+  @override
+  Widget build(BuildContext context) {
+    final screenWith = MediaQuery.of(context).size.width; 
+    return GestureDetector(
+      child: Container(
+        width: screenWith,
+        height: 150,
+        decoration: BoxDecoration(
+          color: color,
+          borderRadius: BorderRadius.circular(30),
+          boxShadow: [
+                BoxShadow(
+                  color: Colors.white.withOpacity(0.3),
+                  spreadRadius: 5,
+                  blurRadius: 7,
+                  offset: const Offset(0, 3), // changes position of shadow
+                ),
+                
+              ],
         ),
-      ): Container();
+        margin: const EdgeInsets.only(left: 10, right: 10, bottom: 20),
+        padding: const EdgeInsets.all(20),
+
+        child: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            Align(
+              alignment: Alignment.bottomLeft,
+              child: Text(
+                title, 
+                style: GoogleFonts.openSans(
+                  textStyle: const TextStyle(
+                    fontSize:20,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.white
+                  )
+                )
+              )
+            ),
+            icon
+          ],
+        )
+      ),
+
+      onTap: (){
+        Navigator.pushNamed(context, route);
+      },
+    );
+  }
 }
-
-
-
-Widget _buildLoading() => const Center(child: CircularProgressIndicator());
-
-
-
-

@@ -56,8 +56,7 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
 
     on<OnSubAmount>((event, emit) {
       List<Order> orders = state.orders;
-      int i = orders
-          .indexWhere((element) => element.mercaderiaId == event.mercaderiaId);
+      int i = orders.indexWhere((element) => element.mercaderiaId == event.mercaderiaId);
 
       if (orders[i].cantidad > 1) {
         orders[i].cantidad = orders[i].cantidad - 1;
@@ -72,20 +71,17 @@ class OrdersBloc extends Bloc<OrdersEvent, OrdersState> {
   }
   final ApiRepository _apiRepository = ApiRepository();
 
-  sendOrder() async{
+  sendOrder(bool value) async{
     List<Order> orders = state.orders;
     List ordersJSON = [];
-    await printOrders(orders);
+    if(value) await printOrders(orders);
 
     for (var singleOrder in orders) {
       ordersJSON.add(singleOrder.toJson());
     }
 
     _apiRepository.postOrders(ordersJSON);
-    Fluttertoast.showToast(
-        msg: "Se envio correctamente",
-        textColor: Colors.white,
-        backgroundColor: Colors.green);
+    Fluttertoast.showToast(msg: "Se envio correctamente",textColor: Colors.white,backgroundColor: Colors.green);
     emit(state.copyWith(orders: []));
     var aux = state;
     emit(OrderRemoved());

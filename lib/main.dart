@@ -8,6 +8,7 @@ import 'package:pos_app/bloc/products/products_bloc.dart';
 import 'package:pos_app/bloc/sabores/sabores_bloc.dart';
 import 'package:pos_app/pages/cart_page.dart';
 import 'package:pos_app/pages/home_page.dart';
+import 'package:pos_app/pages/products_page.dart';
 import 'package:provider/provider.dart';
 
 void main() { 
@@ -41,11 +42,12 @@ class MyApp extends StatelessWidget {
           data: windowData,
           child: MaterialApp(
             debugShowCheckedModeBanner: false,
-            title: 'Material App',
-            initialRoute: "home",
+            title: 'POS',
+            initialRoute: 'home',
             routes: {
-              "home" : (context) => const HomePage(),
-              "cart" : (context) => const CartPage()
+              'products' : (context) => const ProductsPage(),
+              'cart'     : (context) => const CartPage(),
+              'home'     : (context) => const HomePage(),
             },
           )
         );

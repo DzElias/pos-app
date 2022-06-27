@@ -7,7 +7,7 @@ import 'package:pos_app/models/sabor.dart';
 
 class ApiProvider {
   final Dio _dio = Dio();
-  final String _url = 'http://192.168.140.86:3000';
+  final String _url = 'http://192.168.140.249:3000';
 
   Future<List<Grupo>> fetchGroupList() async {
     List<Grupo> grupos = [];

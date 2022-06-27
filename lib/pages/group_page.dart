@@ -42,14 +42,7 @@ class _GroupPageState extends State<GroupPage> {
         elevation: 2,
         backgroundColor: Colors.redAccent,
         iconTheme: const IconThemeData(color: Colors.white),
-        title: Row(
-          children: 
-          [
-            Text(widget.groupName.capitalize() , style: const TextStyle(fontWeight: FontWeight.w500),),
-            const Spacer(),
-            const IconBtn()
-          ],
-        ),
+        title: Text(widget.groupName.capitalize() , style: const TextStyle(fontWeight: FontWeight.w500),),
         
       ),
 

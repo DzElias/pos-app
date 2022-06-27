@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
 import 'package:pos_app/bloc/orders/orders_bloc.dart';
+import 'package:pos_app/helpers/mostrar_alerta.dart';
 import 'package:pos_app/models/order.dart';
 import 'package:pos_app/widgets/order_item.dart';
 import 'package:provider/provider.dart';
@@ -44,11 +45,18 @@ class _CartPageState extends State<CartPage> {
     return Positioned(
       bottom: 0,
       child: InkWell(
-        onTap: () {
+        onTap: () async {
             final ordersBloc = Provider.of<OrdersBloc>(context, listen:false);
             if(ordersBloc.state.orders.isNotEmpty){
-              ordersBloc.sendOrder();
-              Fluttertoast.showToast(msg: "Imprimiendo recibo...", backgroundColor: const Color.fromRGBO(153, 121, 99, 1));
+              final value = await mostrarAlerta(context, 'Desea imprimir el recibo?','');
+
+              if(value){
+                Fluttertoast.showToast(msg: "Imprimiendo recibo...", backgroundColor: const Color.fromRGBO(153, 121, 99, 1));
+              }
+
+              ordersBloc.sendOrder(value);
+              
+              
             }
           },
         child: Container(
